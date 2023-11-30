@@ -5,11 +5,15 @@ import PackageDescription
 
 let package = Package(
     name: "MulberryDataSource",
+    platforms: [
+        .iOS(.v15)
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "MulberryDataSource",
-            targets: ["MulberryDataSource"]),
+            targets: ["MulberryDataSource"]
+        ),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -18,6 +22,7 @@ let package = Package(
             name: "MulberryDataSource"),
         .testTarget(
             name: "MulberryDataSourceTests",
-            dependencies: ["MulberryDataSource"]),
+            dependencies: ["MulberryDataSource"]
+        ),
     ]
 )

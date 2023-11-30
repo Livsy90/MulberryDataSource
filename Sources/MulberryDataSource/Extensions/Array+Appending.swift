@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension Array where Element: Equatable {
+extension Array where Element: Equatable {
     func appendingSequence(_ sequence: [Element]) -> [Element] {
         self + sequence
     }

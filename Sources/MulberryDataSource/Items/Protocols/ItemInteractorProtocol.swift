@@ -20,7 +20,7 @@ public extension ItemViewModelProtocol {
 }
 
 public extension ItemViewModelProtocol {
-    var connected: HashableItem {
+    var hashable: HashableItem {
         HashableItem(self)
     }
 }
