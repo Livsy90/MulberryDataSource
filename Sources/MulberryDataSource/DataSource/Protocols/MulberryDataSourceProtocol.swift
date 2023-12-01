@@ -5,7 +5,7 @@
 //  Created by Livsy on 29.11.2023.
 //
 
-import Foundation
+import UIKit
 
 public protocol MulberryDataSourceProtocol {
     var didReachTop: (() -> Void)? { get set }
@@ -13,7 +13,7 @@ public protocol MulberryDataSourceProtocol {
     var sections: [HashableSection] { get set }
     
     func scrollToTop(animated: Bool)
-    func scrollToBottom(animated: Bool)
+    func scrollToBottom(at scrollPosition: UITableView.ScrollPosition, animated: Bool)
     func appendSections(_ sections: [HashableSection])
     func appendItems(_ items: [HashableItem], toSection: HashableSection, _ completion: (() -> Void)?)
     func removeAt(_ indexPaths: [IndexPath], _ completion: (() -> Void)?)

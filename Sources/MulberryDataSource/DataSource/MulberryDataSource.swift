@@ -23,7 +23,9 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         _ completion: @escaping () -> Void
     ) -> Void
     
-    private typealias TableDataSource = UITableViewDiffableDataSource<HashableSection, HashableItem>
+    private enum Constants {
+        static let defaultOffset: CGFloat = 60
+    }
     
     private final class ItemTapGesture: UITapGestureRecognizer {
         var viewModel: ItemViewModelTappable?
@@ -33,6 +35,13 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     
     public var didReachTop: (() -> Void)?
     public var didReachBottom: (() -> Void)?
+    public var edgeReachCompletionOffset: CGFloat = Constants.defaultOffset
+    public var shouldDeselectRowAfterTap: Bool = true
+    public var rowAnimation: UITableView.RowAnimation = .automatic {
+        didSet {
+            dataSource.defaultRowAnimation = rowAnimation
+        }
+    }
     public var sections: [HashableSection] = [] {
         didSet {
             reload()
@@ -41,48 +50,31 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     
     // MARK: - Private Properties
     
-    private let rowAnimation: UITableView.RowAnimation
-    private let edgeReachCompletionOffset: CGFloat
-    private let shouldDeselectRowAfterTap: Bool
     private var registeredReuseIdentifiers: Set<String> = .init()
     private var tableView: UITableView {
         didSet {
             registeredReuseIdentifiers.removeAll()
         }
     }
-    private lazy var dataSource: TableDataSource = {
-        let datasource = TableDataSource(
-            tableView: tableView,
-            cellProvider: { [weak self] _, _, item -> UITableViewCell? in
-                if let cell = self?.dequeueCell(item.viewModel.reuseIdentifier) {
-                    cell.configure(item.viewModel)
-                    return cell
-                }
+    private lazy var dataSource = UITableViewDiffableDataSource<HashableSection, HashableItem>(
+        tableView: tableView,
+        cellProvider: { [weak self] _, _, item -> UITableViewCell? in
+            guard let cell = self?.dequeueCell(item.viewModel.reuseIdentifier) else {
                 return .init()
-            })
-        datasource.defaultRowAnimation = rowAnimation
-        
-        return datasource
-    }()
+            }
+            cell.configure(with: item.viewModel)
+            
+            return cell
+        }
+    )
     
     // MARK: - Init
     
-    public init(
-        tableView: UITableView,
-        rowAnimation: UITableView.RowAnimation = .fade,
-        shouldDeselectRowAfterTap: Bool = true,
-        edgeReachCompletionOffset: CGFloat = 60
-    ) {
-        
+    public init(tableView: UITableView) {
         self.tableView = tableView
-        self.rowAnimation = rowAnimation
-        self.shouldDeselectRowAfterTap = shouldDeselectRowAfterTap
-        self.edgeReachCompletionOffset = edgeReachCompletionOffset
-        
         super.init()
         
         self.tableView.delegate = self
-        self.tableView.allowsSelection = true
     }
     
     // MARK: - Public Methods
@@ -93,23 +85,8 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         }
     }
     
-    public func scrollToBottom(animated: Bool) {
-        let section: Int = sections.count - 1
-        let lastItemIndex: Int = sections[safe: section]?.items.count ?? 0
-        let row: Int = lastItemIndex - 1
-        
-        guard row >= 0 else {
-            return
-        }
-        
-        DispatchQueue.main.async {
-            let indexPath: IndexPath = .init(row: row, section: section)
-            self.tableView.scrollToRow(
-                at: indexPath,
-                at: .bottom,
-                animated: animated
-            )
-        }
+    public func scrollToBottom(at scrollPosition: UITableView.ScrollPosition, animated: Bool) {
+        tableView.scrollToBottom(at: scrollPosition, animated: animated)
     }
     
     public func appendSections(_ sections: [HashableSection]) {
@@ -257,8 +234,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
             tableView.register(cellClass, forCellReuseIdentifier: item.viewModel.reuseIdentifier)
         } else if Bundle.main.path(forResource: item.viewModel.reuseIdentifier, ofType: "nib") != nil {
             tableView.register(UINib(nibName: item.viewModel.reuseIdentifier, bundle: .main), forCellReuseIdentifier: item.viewModel.reuseIdentifier)
-        }
-        else {
+        } else {
             fatalError(
                 "MulberryDataSource: nib with name \"\(item.viewModel.reuseIdentifier)\" wasn't found"
             )
@@ -266,7 +242,6 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         
         registeredReuseIdentifiers.insert(item.viewModel.reuseIdentifier)
     }
-    
     
     private func configureMutableItem(_ item: HashableItem) {
         guard let viewModel = item.viewModel as? ItemViewModelMutable else { return }
@@ -350,7 +325,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
             return UIView(frame: .zero)
         }
         
-        header.configure(viewModel)
+        header.configure(with: viewModel)
         
         if let tappable = viewModel as? ItemViewModelTappable {
             let tapGestureRecognizer = ItemTapGesture(
