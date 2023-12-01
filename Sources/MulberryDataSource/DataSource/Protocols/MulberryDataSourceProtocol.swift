@@ -18,7 +18,7 @@ public protocol MulberryDataSourceProtocol {
     func appendItems(_ items: [HashableItem], toSection: HashableSection, _ completion: (() -> Void)?)
     func removeAt(_ indexPaths: [IndexPath], _ completion: (() -> Void)?)
     func removeItems(_ items: [HashableItem], _ completion: (() -> Void)?)
-    func insertItems(_ items: [HashableItem], at indexPath: IndexPath, _ completion: (() -> Void)?)
+    func insertItems(_ items: [HashableItem], afterItemAt indexPath: IndexPath, _ completion: (() -> Void)?)
     func insertAfterItem(_ item: HashableItem, items: [HashableItem], _ completion: (() -> Void)?)
     func insertBeforeItem(_ item: HashableItem, items: [HashableItem], _ completion: (() -> Void)?)
 }

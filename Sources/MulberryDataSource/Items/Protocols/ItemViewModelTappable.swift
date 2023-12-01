@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol ItemViewModelTappable: ItemViewModelProtocol {
+public protocol ItemViewModelTappable: ItemViewModelProtocol {
     var onTap: (() -> Void)? { get set }
 }

@@ -124,7 +124,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         _ completion: (() -> Void)? = nil
     ) {
         
-        items.forEach(registerItem)
+        items.forEach(configureItem)
         
         DispatchQueue.main.async {
             var snapshot = self.dataSource.snapshot()
@@ -166,24 +166,42 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     
     public func insertItems(
         _ items: [HashableItem],
-        at indexPath: IndexPath,
+        afterItemAt indexPath: IndexPath,
         _ completion: (() -> Void)? = nil
     ) {
         
-        items.forEach(registerItem)
-        let previousItemIndexPath: IndexPath = .init(
-            row: indexPath.row - 1,
-            section: indexPath.section
-        )
-        
-        guard let item = dataSource.itemIdentifier(for: previousItemIndexPath) else {
-            assert(false, "DiffableDataSource: insertItems")
+        guard let item = dataSource.itemIdentifier(for: indexPath) else {
+            assert(false, "MulberryDataSource: insertItems failure")
             return
         }
+        
+        items.forEach(configureItem)
         
         DispatchQueue.main.async {
             var snapshot = self.dataSource.snapshot()
             snapshot.insertItems(items, afterItem: item)
+            self.dataSource.apply(snapshot) {
+                completion?()
+            }
+        }
+    }
+    
+    public func insertItems(
+        _ items: [HashableItem],
+        beforeItemAt indexPath: IndexPath,
+        _ completion: (() -> Void)? = nil
+    ) {
+        
+        guard let item = dataSource.itemIdentifier(for: indexPath) else {
+            assert(false, "MulberryDataSource: insertItems failure")
+            return
+        }
+
+        items.forEach(configureItem)
+        
+        DispatchQueue.main.async {
+            var snapshot = self.dataSource.snapshot()
+            snapshot.insertItems(items, beforeItem: item)
             self.dataSource.apply(snapshot) {
                 completion?()
             }
@@ -196,7 +214,8 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         _ completion: (() -> Void)? = nil
     ) {
         
-        items.forEach(registerItem)
+        items.forEach(configureItem)
+        
         DispatchQueue.main.async {
             var snapshot = self.dataSource.snapshot()
             snapshot.insertItems(items, afterItem: item)
@@ -212,7 +231,8 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         _ completion: (() -> Void)?
     ) {
         
-        items.forEach(registerItem)
+        items.forEach(configureItem)
+        
         DispatchQueue.main.async {
             var snapshot = self.dataSource.snapshot()
             snapshot.insertItems(items, beforeItem: item)
@@ -224,6 +244,11 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     
     // MARK: - Private Methods
     
+    private func configureItem(_ item: HashableItem) {
+        registerItem(item)
+        configureMutableItem(item)
+        configureDeletableItem(item)
+    }
     
     private func registerItem(_ item: HashableItem) {
         guard !registeredReuseIdentifiers.contains(item.viewModel.reuseIdentifier) else { return }
@@ -235,7 +260,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         }
         else {
             fatalError(
-                "DiffableDataSource: nib with name \"\(item.viewModel.reuseIdentifier)\" was not found"
+                "MulberryDataSource: nib with name \"\(item.viewModel.reuseIdentifier)\" wasn't found"
             )
         }
         
@@ -264,16 +289,11 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     
     private func reload() {
         sections
-            .flatMap { $0.items.appendingSequence([$0.header].compactMap({ $0 })) }
-            .forEach {
-                registerItem($0)
-                configureMutableItem($0)
-                configureDeletableItem($0)
-            }
+            .flatMap { ($0.items + [$0.header]).compactMap { $0 } }
+            .forEach { configureItem($0) }
         
         DispatchQueue.main.async {
-            var snapshot =
-            self.dataSource.snapshot()
+            var snapshot = self.dataSource.snapshot()
             snapshot.deleteAllItems()
             snapshot.appendSections(self.sections)
             self.sections.forEach { snapshot.appendItems($0.items, toSection: $0) }

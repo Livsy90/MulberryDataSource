@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol ItemViewModelDeletable: ItemViewModelProtocol {
+public protocol ItemViewModelDeletable: ItemViewModelProtocol {
     var onDelete: (() -> Void)? { get set }
 }

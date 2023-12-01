@@ -7,7 +7,7 @@
 
 import UIKit
 
-public protocol ItemViewModelProtocol: NSObject {
+public protocol ItemViewModelProtocol: AnyObject {
     var cellClass: UITableViewCell.Type? { get }
     var reuseIdentifier: String { get }
     var itemHeight: CGFloat { get }

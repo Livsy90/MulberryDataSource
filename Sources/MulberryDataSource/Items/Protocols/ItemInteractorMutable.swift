@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol ItemViewModelMutable: ItemViewModelProtocol {
+public protocol ItemViewModelMutable: ItemViewModelProtocol {
     var onChange: (() -> Void)? { get set }
 }
