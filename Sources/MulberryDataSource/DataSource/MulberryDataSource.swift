@@ -170,7 +170,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func insertItems(
         _ items: [HashableItem],
-        _ position: ItemPosotion,
+        _ position: ItemPosition,
         _ indexPath: IndexPath,
         _ completion: (() -> Void)? = nil
     ) {
@@ -204,7 +204,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func insertItems(
         _ items: [HashableItem],
-        _ position: ItemPosotion,
+        _ position: ItemPosition,
         _ item: HashableItem,
         _ completion: (() -> Void)? = nil
     ) {
@@ -245,7 +245,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func move(
         itemAt indexPath: IndexPath,
-        _ position: ItemPosotion,
+        _ position: ItemPosition,
         itemAt toIndexPath: IndexPath,
         _ completion: (() -> Void)?
     ) {
@@ -320,7 +320,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func move(
         sectionWith index: Int,
-        _ position: ItemPosotion,
+        _ position: ItemPosition,
         sectionWith toIndex: Int,
         _ completion: (() -> Void)?
     ) {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum ItemPosotion {
+public enum ItemPosition {
     case before
     case after
 }
