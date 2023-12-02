@@ -39,14 +39,14 @@ class ViewModel {
     func buildItem(with data: ServerResponce) -> HashableItem {
         let item = ItemViewModel(data: data)
         item.onTap = {
-            print("")
+            print(data.title)
         }
         
         return item.hashable
     }
 }
 
-final class Cell: UITableViewCell, CellConfigurable {
+class Cell: UITableViewCell, CellConfigurable {
     func configure(with viewModel: ItemViewModelProtocol) {
         guard let viewModel = viewModel as? ItemViewModel else {
             return
@@ -66,14 +66,14 @@ class ItemViewModel: NSObject, ItemViewModelTappable {
     }
 }
 
-struct ServerResponce { 
-
-}
-
 class ApiService {
     func getData(_ completion: (([ServerResponce]) -> Void)?) {
-        completion?([])
+        completion?([ServerResponce(title: "Title")])
     }
+}
+
+struct ServerResponce {
+    var title: String
 }
 
 ```
