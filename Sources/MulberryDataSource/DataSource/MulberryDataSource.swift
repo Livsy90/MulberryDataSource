@@ -12,11 +12,6 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     
     // MARK: - Nested Entities
     
-    public enum Position {
-        case before
-        case after
-    }
-    
     private enum Constants {
         static let defaultOffset: CGFloat = 60
     }
@@ -164,7 +159,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func insertItems(
         _ items: [HashableItem],
-        _ position: Position,
+        _ position: ItemPosotion,
         _ indexPath: IndexPath,
         _ completion: (() -> Void)? = nil
     ) {
@@ -199,7 +194,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func insertItems(
         _ items: [HashableItem],
-        _ position: Position,
+        _ position: ItemPosotion,
         _ item: HashableItem,
         _ completion: (() -> Void)? = nil
     ) {
@@ -240,7 +235,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func move(
         itemAt indexPath: IndexPath,
-        _ position: Position,
+        _ position: ItemPosotion,
         itemAt toIndexPath: IndexPath,
         _ completion: (() -> Void)?
     ) {
@@ -315,7 +310,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func move(
         sectionWith index: Int,
-        _ position: Position,
+        _ position: ItemPosotion,
         sectionWith toIndex: Int,
         _ completion: (() -> Void)?
     ) {
