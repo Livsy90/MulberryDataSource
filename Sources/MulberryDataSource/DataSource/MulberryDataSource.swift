@@ -22,18 +22,29 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     
     // MARK: - Public Properties
     
-    public var didReachTop: (() -> Void)?
-    public var didReachBottom: (() -> Void)?
-    public var edgeReachCompletionOffset: CGFloat = Constants.defaultOffset
-    public var shouldDeselect: Bool = true
-    public var rowAnimation: UITableView.RowAnimation = .automatic {
-        didSet {
-            dataSource.defaultRowAnimation = rowAnimation
-        }
-    }
+    /// Sections of the table view
     public var sections: [HashableSection] = [] {
         didSet {
             reload()
+        }
+    }
+    
+    /// Notifies when the top of the table view with a specified offset has been reached.
+    public var didReachTop: (() -> Void)?
+    
+    /// Notifies when the bottom of the table view with a specified offset has been reached.
+    public var didReachBottom: (() -> Void)?
+    
+    /// Defines the offset to the edge of the table view at which the completion should be triggered.
+    public var edgeReachCompletionOffset: CGFloat = Constants.defaultOffset
+    
+    /// Defines the behavior of the table view cells after a tap.
+    public var shouldDeselect: Bool = true
+    
+    /// The type of animation to use when inserting or deleting rows.
+    public var rowAnimation: UITableView.RowAnimation = .automatic {
+        didSet {
+            dataSource.defaultRowAnimation = rowAnimation
         }
     }
     
@@ -184,7 +195,6 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
             }
         }
     }
-    
     
     /// Inserts the provided items immediately before or after the item with the specified indentifier.
     /// - Parameters:
