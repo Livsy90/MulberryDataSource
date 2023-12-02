@@ -6,33 +6,17 @@ A universal UITableViewDiffableDataSource wrapper that allows to fill your table
 
 ```swift 
 
-final class Cell: UITableViewCell, CellConfigurable {
-    func configure(with viewModel: ItemViewModelProtocol) {
-        guard let viewModel = viewModel as? ItemViewModel else {
-            return
+class ViewController: UIViewController {
+    let viewModel: ViewModel = .init()
+    let tableView = UITableView()
+    lazy var dataSource = MulberryDataSource(tableView: tableView)
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        viewModel.onGetData = { [weak self] sections in
+            self?.dataSource.sections = sections
         }
-    }
-}
-
-class ItemViewModel: NSObject, ItemViewModelTappable {
-    var cellClass: UITableViewCell.Type? { Cell.self }
-    var reuseIdentifier: String { String(describing: Cell.self) }
-    var onTap: (() -> Void)?
-    
-    let data: ServerResponce
-    
-    init(data: ServerResponce) {
-        self.data = data
-    }
-}
-
-struct ServerResponce { 
-
-}
-
-class ApiService {
-    func getData(_ completion: (([ServerResponce]) -> Void)?) {
-        completion?([])
     }
 }
 
@@ -62,17 +46,33 @@ class ViewModel {
     }
 }
 
-class ViewController: UIViewController {
-    let viewModel: ViewModel = .init()
-    let tableView = UITableView()
-    lazy var dataSource = MulberryDataSource(tableView: tableView)
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        viewModel.onGetData = { [weak self] sections in
-            self?.dataSource.sections = sections
+final class Cell: UITableViewCell, CellConfigurable {
+    func configure(with viewModel: ItemViewModelProtocol) {
+        guard let viewModel = viewModel as? ItemViewModel else {
+            return
         }
+    }
+}
+
+class ItemViewModel: NSObject, ItemViewModelTappable {
+    var cellClass: UITableViewCell.Type? { Cell.self }
+    var reuseIdentifier: String { String(describing: Cell.self) }
+    var onTap: (() -> Void)?
+    
+    let data: ServerResponce
+    
+    init(data: ServerResponce) {
+        self.data = data
+    }
+}
+
+struct ServerResponce { 
+
+}
+
+class ApiService {
+    func getData(_ completion: (([ServerResponce]) -> Void)?) {
+        completion?([])
     }
 }
 
