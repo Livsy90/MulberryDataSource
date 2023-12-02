@@ -289,6 +289,24 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         }
     }
     
+    /// Reloads the data within the specified items in the snapshot.
+    /// - Parameters:
+    ///   - indexPaths: The array of identifiers corresponding to the items to reload in the snapshot.
+    ///   - completion: The block to execute after the updates.
+    public func reloadItems(
+        _ items: [HashableItem],
+        _ completion: (() -> Void)?
+    ) {
+        
+        DispatchQueue.main.async {
+            var snapshot = self.dataSource.snapshot()
+            snapshot.reloadItems(items)
+            self.dataSource.apply(snapshot) {
+                completion?()
+            }
+        }
+    }
+    
     /// Moves the section from its current position in the snapshot to the position immediately before or after the specified section.
     /// - Parameters:
     ///   - index: The index of the section to move in the snapshot.
@@ -336,6 +354,24 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         let sections = indexes.compactMap {
             dataSource.sectionIdentifier(for: $0)
         }
+        
+        DispatchQueue.main.async {
+            var snapshot = self.dataSource.snapshot()
+            snapshot.reloadSections(sections)
+            self.dataSource.apply(snapshot) {
+                completion?()
+            }
+        }
+    }
+    
+    /// Reloads the data within the specified sections of the snapshot.
+    /// - Parameters:
+    ///   - indexes: The array of identifiers corresponding to the sections to reload in the snapshot.
+    ///   - completion: The block to execute after the updates.
+    public func reloadSections(
+        _ sections: [HashableSection],
+        _ completion: (() -> Void)?
+    ) {
         
         DispatchQueue.main.async {
             var snapshot = self.dataSource.snapshot()
