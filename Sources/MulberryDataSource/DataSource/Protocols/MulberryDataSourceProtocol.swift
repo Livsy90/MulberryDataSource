@@ -21,8 +21,8 @@ public protocol MulberryDataSourceProtocol {
     func insertItems(_ items: [HashableItem], _ position: MulberryDataSource.Position, _ indexPath: IndexPath, _ completion: (() -> Void)?)
     func insertItems(_ items: [HashableItem], _ position: MulberryDataSource.Position, _ item: HashableItem, _ completion: (() -> Void)?)
     func removeAll(_ completion: (() -> Void)?)
-    func move(itemAt firstIndexPath: IndexPath, _ position: MulberryDataSource.Position, itemAt secondIndexPath: IndexPath, _ completion: (() -> Void)?)
-    func move(sectionWith firstIndex: Int, _ position: MulberryDataSource.Position, sectionWith secondIndex: Int,_ completion: (() -> Void)?)
+    func move(itemAt indexPath: IndexPath, _ position: MulberryDataSource.Position, itemAt toIndexPath: IndexPath, _ completion: (() -> Void)?)
+    func move(sectionWith index: Int, _ position: MulberryDataSource.Position, sectionWith toIndex: Int,_ completion: (() -> Void)?)
     func reloadSections(at indexes: [Int], _ completion: (() -> Void)?)
     func reloadItems(at indexPaths: [IndexPath], _ completion: (() -> Void)?)
 }
