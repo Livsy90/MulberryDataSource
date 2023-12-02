@@ -26,8 +26,8 @@ class ItemViewModel: NSObject, ItemViewModelTappable {
     }
 }
 
-struct ServerResponce {
-    var title: String
+struct ServerResponce { 
+
 }
 
 class ApiService {
@@ -62,7 +62,7 @@ class ViewModel {
     }
 }
 
-class VIewController: UIViewController {
+class ViewController: UIViewController {
     let viewModel: ViewModel = .init()
     let tableView = UITableView()
     lazy var dataSource = MulberryDataSource(tableView: tableView)
