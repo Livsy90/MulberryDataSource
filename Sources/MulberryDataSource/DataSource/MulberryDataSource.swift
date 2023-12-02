@@ -12,16 +12,10 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     
     // MARK: - Nested Entities
     
-    public typealias InsertHandler = (
-        _ at: IndexPath,
-        _ items: [HashableItem],
-        _ completion: @escaping () -> Void
-    ) -> Void
-    
-    public typealias DeleteHandler = (
-        _ at: [IndexPath],
-        _ completion: @escaping () -> Void
-    ) -> Void
+    public enum Position {
+        case before
+        case after
+    }
     
     private enum Constants {
         static let defaultOffset: CGFloat = 60
@@ -36,7 +30,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     public var didReachTop: (() -> Void)?
     public var didReachBottom: (() -> Void)?
     public var edgeReachCompletionOffset: CGFloat = Constants.defaultOffset
-    public var shouldDeselectRowAfterTap: Bool = true
+    public var shouldDeselect: Bool = true
     public var rowAnimation: UITableView.RowAnimation = .automatic {
         didSet {
             dataSource.defaultRowAnimation = rowAnimation
@@ -79,25 +73,38 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     
     // MARK: - Public Methods
     
+    /// Scrolls the table view content to the top.
+    /// - Parameter animated: Turns animation on or off.
     public func scrollToTop(animated: Bool) {
         DispatchQueue.main.async {
             self.tableView.setContentOffset(.zero, animated: animated)
         }
     }
     
+    /// Scrolls the table view content to the bottom.
+    /// - Parameters:
+    ///   - scrollPosition: The position in the table view (top, middle, bottom) to scroll a specified row to.
+    ///   - animated: Turns animation on or off.
     public func scrollToBottom(at scrollPosition: UITableView.ScrollPosition, animated: Bool) {
         tableView.scrollToBottom(at: scrollPosition, animated: animated)
     }
     
+    /// Adds the sections with the specified identifiers to the snapshot.
+    /// - Parameter sections: An array of identifiers specifying the sections to add to the snapshot.
     public func appendSections(_ sections: [HashableSection]) {
         var snapshot = dataSource.snapshot()
         snapshot.appendSections(sections)
         dataSource.apply(snapshot)
     }
     
+    /// Adds the items with the specified identifiers to the specified section of the snapshot.
+    /// - Parameters:
+    ///   - items: An array of identifiers specifying the items to add to the snapshot.
+    ///   - toSection: The section to which to add the items. If no value is provided, the items are appended to the last section of the snapshot.
+    ///   - completion: The block to execute after the updates.
     public func appendItems(
         _ items: [HashableItem],
-        toSection: HashableSection,
+        toSection: HashableSection?,
         _ completion: (() -> Void)? = nil
     ) {
         
@@ -113,6 +120,10 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         }
     }
     
+    /// Deletes the items at the specified index paths.
+    /// - Parameters:
+    ///   - indexPaths: An array of NSIndexPath objects, each of which contains a section index and item index for the item you want to delete from the table view
+    ///   - completion: The block to execute after the updates.
     public func removeAt(
         _ indexPaths: [IndexPath],
         _ completion: (() -> Void)? = nil
@@ -127,6 +138,10 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         }
     }
     
+    /// Deletes the items with the specified identifiers.
+    /// - Parameters:
+    ///   - items: The array of identifiers corresponding to the items to delete from the snapshot.
+    ///   - completion: The block to execute after the updates.
     public func removeItems(
         _ items: [HashableItem],
         _ completion: (() -> Void)? = nil
@@ -141,9 +156,16 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         }
     }
     
+    /// Inserts the provided items immediately before or after the item with the specified index path.
+    /// - Parameters:
+    ///   - items: The array of identifiers corresponding to the items to add to the snapshot.
+    ///   - position: Determines the position: before or after.
+    ///   - indexPath: The index path of the item before or after which to insert the new items.
+    ///   - completion: The block to execute after the updates.
     public func insertItems(
         _ items: [HashableItem],
-        afterItemAt indexPath: IndexPath,
+        _ position: Position,
+        _ indexPath: IndexPath,
         _ completion: (() -> Void)? = nil
     ) {
         
@@ -156,38 +178,29 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         
         DispatchQueue.main.async {
             var snapshot = self.dataSource.snapshot()
-            snapshot.insertItems(items, afterItem: item)
+            switch position {
+            case .before:
+                snapshot.insertItems(items, beforeItem: item)
+            case .after:
+                snapshot.insertItems(items, afterItem: item)
+            }
             self.dataSource.apply(snapshot) {
                 completion?()
             }
         }
     }
     
+    
+    /// Inserts the provided items immediately before or after the item with the specified indentifier.
+    /// - Parameters:
+    ///   - items: The array of identifiers corresponding to the items to add to the snapshot.
+    ///   - position: Determines the position: before or after.
+    ///   - item: The identifier of the item before or after which to insert the new items.
+    ///   - completion: The block to execute after the updates.
     public func insertItems(
         _ items: [HashableItem],
-        beforeItemAt indexPath: IndexPath,
-        _ completion: (() -> Void)? = nil
-    ) {
-        
-        guard let item = dataSource.itemIdentifier(for: indexPath) else {
-            assert(false, "MulberryDataSource: insertItems failure")
-            return
-        }
-
-        items.forEach(configureItem)
-        
-        DispatchQueue.main.async {
-            var snapshot = self.dataSource.snapshot()
-            snapshot.insertItems(items, beforeItem: item)
-            self.dataSource.apply(snapshot) {
-                completion?()
-            }
-        }
-    }
-    
-    public func insertAfterItem(
+        _ position: Position,
         _ item: HashableItem,
-        items: [HashableItem],
         _ completion: (() -> Void)? = nil
     ) {
         
@@ -195,24 +208,138 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         
         DispatchQueue.main.async {
             var snapshot = self.dataSource.snapshot()
-            snapshot.insertItems(items, afterItem: item)
+            switch position {
+            case .before:
+                snapshot.insertItems(items, beforeItem: item)
+            case .after:
+                snapshot.insertItems(items, afterItem: item)
+            }
             self.dataSource.apply(snapshot) {
                 completion?()
             }
         }
     }
     
-    public func insertBeforeItem(
-        _ item: HashableItem,
-        items: [HashableItem],
+    /// Deletes all of the items from the snapshot.
+    /// - Parameter completion: The block to execute after the updates.
+    public func removeAll(_ completion: (() -> Void)?) {
+        DispatchQueue.main.async {
+            var snapshot = self.dataSource.snapshot()
+            snapshot.deleteAllItems()
+            self.dataSource.apply(snapshot) {
+                completion?()
+            }
+        }
+    }
+    
+    /// Moves the item from its current position in the snapshot to the position immediately before or after the specified item.
+    /// - Parameters:
+    ///   - indexPath: The index path of the item to move in the snapshot.
+    ///   - position: Determines the position: before or after.
+    ///   - toIndexPath: The index path  of the item after which to move the specified item.
+    ///   - completion: The block to execute after the updates.
+    public func move(
+        itemAt indexPath: IndexPath,
+        _ position: Position,
+        itemAt toIndexPath: IndexPath,
         _ completion: (() -> Void)?
     ) {
         
-        items.forEach(configureItem)
+        guard
+            let firstItem = dataSource.itemIdentifier(for: indexPath),
+            let secondItem = dataSource.itemIdentifier(for: toIndexPath)
+        else {
+            assert(false, "MulberryDataSource: moveItem failure")
+            return
+        }
         
         DispatchQueue.main.async {
             var snapshot = self.dataSource.snapshot()
-            snapshot.insertItems(items, beforeItem: item)
+            switch position {
+            case .before:
+                snapshot.moveItem(firstItem, beforeItem: secondItem)
+            case .after:
+                snapshot.moveItem(firstItem, afterItem: secondItem)
+            }
+            self.dataSource.apply(snapshot) {
+                completion?()
+            }
+        }
+    }
+    
+    /// Reloads the data within the specified items in the snapshot.
+    /// - Parameters:
+    ///   - indexPaths: The array of index paths corresponding to the items to reload in the snapshot.
+    ///   - completion: The block to execute after the updates.
+    public func reloadItems(
+        at indexPaths: [IndexPath],
+        _ completion: (() -> Void)?
+    ) {
+        
+        let items = indexPaths.compactMap {
+            dataSource.itemIdentifier(for: $0)
+        }
+        
+        DispatchQueue.main.async {
+            var snapshot = self.dataSource.snapshot()
+            snapshot.reloadItems(items)
+            self.dataSource.apply(snapshot) {
+                completion?()
+            }
+        }
+    }
+    
+    /// Moves the section from its current position in the snapshot to the position immediately before or after the specified section.
+    /// - Parameters:
+    ///   - index: The index of the section to move in the snapshot.
+    ///   - position: Determines the position: before or after.
+    ///   - toIndex: The index of the section after which to move the specified section.
+    ///   - completion: The block to execute after the updates.
+    public func move(
+        sectionWith index: Int,
+        _ position: Position,
+        sectionWith toIndex: Int,
+        _ completion: (() -> Void)?
+    ) {
+        
+        guard
+            let firstSection = dataSource.sectionIdentifier(for: index),
+            let secondSection = dataSource.sectionIdentifier(for: toIndex)
+        else {
+            assert(false, "MulberryDataSource: moveSection failure")
+            return
+        }
+        
+        DispatchQueue.main.async {
+            var snapshot = self.dataSource.snapshot()
+            switch position {
+            case .before:
+                snapshot.moveSection(firstSection, beforeSection: secondSection)
+            case .after:
+                snapshot.moveSection(firstSection, afterSection: secondSection)
+            }
+            self.dataSource.apply(snapshot) {
+                completion?()
+            }
+        }
+    }
+    
+    /// Reloads the data within the specified sections of the snapshot.
+    /// - Parameters:
+    ///   - indexes: The array of indexes corresponding to the sections to reload in the snapshot.
+    ///   - completion: The block to execute after the updates.
+    public func reloadSections(
+        at indexes: [Int],
+        _ completion: (() -> Void)?
+    ) {
+        
+        let sections = indexes.compactMap {
+            dataSource.sectionIdentifier(for: $0)
+        }
+        
+        DispatchQueue.main.async {
+            var snapshot = self.dataSource.snapshot()
+            snapshot.reloadSections(sections)
             self.dataSource.apply(snapshot) {
                 completion?()
             }
@@ -294,7 +421,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         didSelectRowAt indexPath: IndexPath
     ) {
         
-        if shouldDeselectRowAfterTap {
+        if shouldDeselect {
             tableView.deselectRow(at: indexPath, animated: true)
         }
         

@@ -12,15 +12,3 @@ public protocol ItemViewModelProtocol: AnyObject {
     var reuseIdentifier: String { get }
     var itemHeight: CGFloat { get }
 }
-
-public extension ItemViewModelProtocol {
-    var itemHeight: CGFloat {
-        UITableView.automaticDimension
-    }
-}
-
-public extension ItemViewModelProtocol {
-    var hashable: HashableItem {
-        HashableItem(self)
-    }
-}

@@ -10,6 +10,7 @@ import Foundation
 public struct HashableSection: Hashable {
     public var items: [HashableItem]
     public var header: HashableItem?
+    
     private let id = UUID()
     
     public init(

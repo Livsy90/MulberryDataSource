@@ -9,6 +9,7 @@ import Foundation
 
 public struct HashableItem: Hashable {
     public let viewModel: ItemViewModelProtocol
+    
     private let id = UUID()
     
     public init(_ viewModel: ItemViewModelProtocol) {
