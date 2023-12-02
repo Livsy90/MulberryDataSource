@@ -170,7 +170,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func insertItems(
         _ items: [HashableItem],
-        _ position: ItemPosition,
+        _ position: TablePosition,
         _ indexPath: IndexPath,
         _ completion: (() -> Void)? = nil
     ) {
@@ -204,7 +204,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func insertItems(
         _ items: [HashableItem],
-        _ position: ItemPosition,
+        _ position: TablePosition,
         _ item: HashableItem,
         _ completion: (() -> Void)? = nil
     ) {
@@ -245,7 +245,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func move(
         itemAt indexPath: IndexPath,
-        _ position: ItemPosition,
+        _ position: TablePosition,
         itemAt toIndexPath: IndexPath,
         _ completion: (() -> Void)?
     ) {
@@ -265,6 +265,33 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
                 snapshot.moveItem(firstItem, beforeItem: secondItem)
             case .after:
                 snapshot.moveItem(firstItem, afterItem: secondItem)
+            }
+            self.dataSource.apply(snapshot) {
+                completion?()
+            }
+        }
+    }
+    
+    /// Moves the item from its current position in the snapshot to the position immediately before or after the specified item.
+    /// - Parameters:
+    ///   - item: The identifier of the item to move in the snapshot.
+    ///   - position: Determines the position: before or after.
+    ///   - toItem: The identifier of the item after which to move the specified item.
+    ///   - completion: The block to execute after the updates.
+    public func move(
+        _ item: HashableItem,
+        _ position: TablePosition,
+        _ toItem: HashableItem,
+        _ completion: (() -> Void)?
+    ) {
+        
+        DispatchQueue.main.async {
+            var snapshot = self.dataSource.snapshot()
+            switch position {
+            case .before:
+                snapshot.moveItem(item, beforeItem: toItem)
+            case .after:
+                snapshot.moveItem(item, afterItem: toItem)
             }
             self.dataSource.apply(snapshot) {
                 completion?()
@@ -320,7 +347,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func move(
         sectionWith index: Int,
-        _ position: ItemPosition,
+        _ position: TablePosition,
         sectionWith toIndex: Int,
         _ completion: (() -> Void)?
     ) {
@@ -340,6 +367,33 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
                 snapshot.moveSection(firstSection, beforeSection: secondSection)
             case .after:
                 snapshot.moveSection(firstSection, afterSection: secondSection)
+            }
+            self.dataSource.apply(snapshot) {
+                completion?()
+            }
+        }
+    }
+    
+    /// Moves the section from its current position in the snapshot to the position immediately before or after the specified section.
+    /// - Parameters:
+    ///   - section: The identifier of the section to move in the snapshot.
+    ///   - position: Determines the position: before or after.
+    ///   - toSection: The index of the section after which to move the specified section.
+    ///   - completion: The block to execute after the updates.
+    public func move(
+        _ section: HashableSection,
+        _ position: TablePosition,
+        _ toSection: HashableSection,
+        _ completion: (() -> Void)?
+    ) {
+        
+        DispatchQueue.main.async {
+            var snapshot = self.dataSource.snapshot()
+            switch position {
+            case .before:
+                snapshot.moveSection(section, beforeSection: toSection)
+            case .after:
+                snapshot.moveSection(section, afterSection: toSection)
             }
             self.dataSource.apply(snapshot) {
                 completion?()
