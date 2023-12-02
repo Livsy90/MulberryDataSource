@@ -65,7 +65,7 @@ public protocol MulberryDataSourceProtocol {
     ///   - position: Determines the position: before or after.
     ///   - indexPath: The index path of the item before or after which to insert the new items.
     ///   - completion: The block to execute after the updates.
-    func insertItems(_ items: [HashableItem], _ position: ItemPosotion, _ indexPath: IndexPath, _ completion: (() -> Void)?)
+    func insertItems(_ items: [HashableItem], _ position: ItemPosition, _ indexPath: IndexPath, _ completion: (() -> Void)?)
     
     /// Inserts the provided items immediately before or after the item with the specified indentifier.
     /// - Parameters:
@@ -73,7 +73,7 @@ public protocol MulberryDataSourceProtocol {
     ///   - position: Determines the position: before or after.
     ///   - item: The identifier of the item before or after which to insert the new items.
     ///   - completion: The block to execute after the updates.
-    func insertItems(_ items: [HashableItem], _ position: ItemPosotion, _ item: HashableItem, _ completion: (() -> Void)?)
+    func insertItems(_ items: [HashableItem], _ position: ItemPosition, _ item: HashableItem, _ completion: (() -> Void)?)
     
     /// Deletes all of the items from the snapshot.
     /// - Parameter completion: The block to execute after the updates.
@@ -85,7 +85,7 @@ public protocol MulberryDataSourceProtocol {
     ///   - position: Determines the position: before or after.
     ///   - toIndexPath: The index path  of the item after which to move the specified item.
     ///   - completion: The block to execute after the updates.
-    func move(itemAt indexPath: IndexPath, _ position: ItemPosotion, itemAt toIndexPath: IndexPath, _ completion: (() -> Void)?)
+    func move(itemAt indexPath: IndexPath, _ position: ItemPosition, itemAt toIndexPath: IndexPath, _ completion: (() -> Void)?)
     
     /// Moves the section from its current position in the snapshot to the position immediately before or after the specified section.
     /// - Parameters:
@@ -93,7 +93,7 @@ public protocol MulberryDataSourceProtocol {
     ///   - position: Determines the position: before or after.
     ///   - toIndex: The index of the section after which to move the specified section.
     ///   - completion: The block to execute after the updates.
-    func move(sectionWith index: Int, _ position: ItemPosotion, sectionWith toIndex: Int,_ completion: (() -> Void)?)
+    func move(sectionWith index: Int, _ position: ItemPosition, sectionWith toIndex: Int,_ completion: (() -> Void)?)
     
     /// Reloads the data within the specified items in the snapshot.
     /// - Parameters:
