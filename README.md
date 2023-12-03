@@ -2,10 +2,11 @@
 
 A universal UITableViewDiffableDataSource wrapper that allows to fill your tableView with cells in a declarative manner, manage its contents and behavior.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](https://opensource.org/licenses/MIT)
+
 ## MulberryDataSourceProtocol
 
 ```swift
-
 public protocol MulberryDataSourceProtocol {
     
     /// Sections of the table view
@@ -145,8 +146,8 @@ public protocol MulberryDataSourceProtocol {
 
 class ViewController: UIViewController {
     let viewModel: ViewModel = .init()
-    let tableView = UITableView()
-    lazy var dataSource = MulberryDataSource(tableView: tableView)
+    let tableView: UITableView = .init()
+    lazy var dataSource: MulberryDataSourceProtocol = MulberryDataSource(tableView: tableView)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -158,11 +159,11 @@ class ViewController: UIViewController {
 }
 
 class ViewModel {
-    let apiService: ApiService = .init()
+    let service: Service = .init()
     var onGetData: (([HashableSection]) -> Void)?
     
     func getData() {
-        apiService.getData { [weak self] data in
+        service.getData { [weak self] data in
             guard let self else { return }
             
             let items = data.map {
@@ -173,7 +174,7 @@ class ViewModel {
         }
     }
     
-    func buildItem(with data: ServerResponce) -> HashableItem {
+    func buildItem(with data: Model) -> HashableItem {
         let item = ItemViewModel(data: data)
         item.onTap = {
             print(data.title)
@@ -196,21 +197,35 @@ class ItemViewModel: NSObject, ItemViewModelTappable {
     var reuseIdentifier: String { String(describing: Cell.self) }
     var onTap: (() -> Void)?
     
-    let data: ServerResponce
+    let data: Model
     
-    init(data: ServerResponce) {
+    init(data: Model) {
         self.data = data
     }
 }
 
-class ApiService {
-    func getData(_ completion: (([ServerResponce]) -> Void)?) {
-        completion?([ServerResponce(title: "Title")])
+class Service {
+    func getData(_ completion: (([Model]) -> Void)?) {
+        completion?([Model(title: "Title")])
     }
 }
 
-struct ServerResponce {
+struct Model {
     var title: String
 }
-
 ```
+
+## Installation
+
+### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/Livsy90/MulberryDataSource.git")
+]
+```
+
+## Requirements
+
+* iOS 15+
+* Xcode 14+
