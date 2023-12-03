@@ -227,7 +227,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     
     /// Deletes all of the items from the snapshot.
     /// - Parameter completion: The block to execute after the updates.
-    public func removeAll(_ completion: (() -> Void)?) {
+    public func removeAll(_ completion: (() -> Void)? = nil) {
         DispatchQueue.main.async {
             var snapshot = self.dataSource.snapshot()
             snapshot.deleteAllItems()
@@ -247,7 +247,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         itemAt indexPath: IndexPath,
         _ position: TablePosition,
         itemAt toIndexPath: IndexPath,
-        _ completion: (() -> Void)?
+        _ completion: (() -> Void)? = nil
     ) {
         
         guard
@@ -282,7 +282,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         _ item: HashableItem,
         _ position: TablePosition,
         _ toItem: HashableItem,
-        _ completion: (() -> Void)?
+        _ completion: (() -> Void)? = nil
     ) {
         
         DispatchQueue.main.async {
@@ -305,7 +305,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func reloadItems(
         at indexPaths: [IndexPath],
-        _ completion: (() -> Void)?
+        _ completion: (() -> Void)? = nil
     ) {
         
         let items = indexPaths.compactMap {
@@ -327,7 +327,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func reloadItems(
         _ items: [HashableItem],
-        _ completion: (() -> Void)?
+        _ completion: (() -> Void)? = nil
     ) {
         
         DispatchQueue.main.async {
@@ -349,7 +349,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         sectionWith index: Int,
         _ position: TablePosition,
         sectionWith toIndex: Int,
-        _ completion: (() -> Void)?
+        _ completion: (() -> Void)? = nil
     ) {
         
         guard
@@ -384,7 +384,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
         _ section: HashableSection,
         _ position: TablePosition,
         _ toSection: HashableSection,
-        _ completion: (() -> Void)?
+        _ completion: (() -> Void)? = nil
     ) {
         
         DispatchQueue.main.async {
@@ -407,7 +407,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func reloadSections(
         at indexes: [Int],
-        _ completion: (() -> Void)?
+        _ completion: (() -> Void)? = nil
     ) {
         
         let sections = indexes.compactMap {
@@ -429,7 +429,7 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     ///   - completion: The block to execute after the updates.
     public func reloadSections(
         _ sections: [HashableSection],
-        _ completion: (() -> Void)?
+        _ completion: (() -> Void)? = nil
     ) {
         
         DispatchQueue.main.async {
