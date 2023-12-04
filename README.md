@@ -9,10 +9,10 @@ A universal UITableViewDiffableDataSource wrapper that allows to fill your table
 ```swift
 public protocol MulberryDataSourceProtocol {
     
-    /// Sections of the table view
+    /// Sections of the table view.
     var sections: [HashableSection] { get set }
     
-    /// Defines the offset to the edge of the table view at which the completion should be triggered.
+    /// Defines the offset from the edge of the table view at which the completion will be triggered.
     var edgeReachCompletionOffset: CGFloat { get set }
     
     /// Notifies when the top of the table view with a specified offset has been reached.
@@ -21,7 +21,7 @@ public protocol MulberryDataSourceProtocol {
     /// Notifies when the bottom of the table view with a specified offset has been reached.
     var didReachBottom: (() -> Void)? { get set }
     
-    /// Defines the behavior of the table view cells after a tap.
+    /// Defines the behavior of the table view cells after tapping.
     var shouldDeselect: Bool { get set }
     
     /// The type of animation to use when inserting or deleting rows.
