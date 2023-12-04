@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ItemViewModelProtocol+Hashable.swift
 //  
 //
 //  Created by Livsy on 01.12.2023.

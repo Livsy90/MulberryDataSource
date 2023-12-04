@@ -1,6 +1,6 @@
 # MulberryDataSource
 
-A universal UITableViewDiffableDataSource wrapper that allows to fill your tableView with cells in a declarative manner, manage its contents and behavior.
+A universal UITableViewDiffableDataSource wrapper that allows to fill your table view with cells in a declarative manner, manage its contents and behavior.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](https://opensource.org/licenses/MIT)
 
