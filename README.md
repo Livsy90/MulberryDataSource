@@ -3,6 +3,8 @@
 A universal UITableViewDiffableDataSource wrapper that allows to fill your table view with cells in a declarative manner, manage its contents and behavior.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](https://opensource.org/licenses/MIT)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FLivsy90%2FMulberryDataSource%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/Livsy90/MulberryDataSource)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FLivsy90%2FMulberryDataSource%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/Livsy90/MulberryDataSource)
 
 ## MulberryDataSourceProtocol
 
