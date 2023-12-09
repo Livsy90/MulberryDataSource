@@ -8,5 +8,5 @@
 import UIKit
 
 public protocol CellConfigurable: UITableViewCell {
-    func configure(with viewModel: ItemViewModelProtocol)
+    func configure(with viewModel: some ItemViewModelProtocol)
 }
