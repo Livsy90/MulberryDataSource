@@ -139,16 +139,24 @@ public protocol MulberryDataSourceProtocol {
     func reloadSections(_ sections: [HashableSection], _ completion: (() -> Void)?)
     
 }
+```
 
+## CellConfigurable
+
+Create a cell that implements this protocol. MulberryDataSource will be able to configure this cell based on its view model.
+
+```swift 
+public protocol CellConfigurable: UITableViewCell {
+    func configure(with viewModel: some ItemViewModelProtocol)
+}
 ```
 
 ## Example
 
 ```swift 
-
 class ViewController: UIViewController {
-    let viewModel: ViewModel = .init()
-    let tableView: UITableView = .init()
+    let viewModel: ViewModel = ViewModel()
+    let tableView: UITableView = UITableView()
     lazy var dataSource: MulberryDataSourceProtocol = MulberryDataSource(tableView: tableView)
     
     override func viewDidLoad() {
@@ -161,7 +169,7 @@ class ViewController: UIViewController {
 }
 
 class ViewModel {
-    let service: Service = .init()
+    let service: Service = Service()
     var onGetData: (([HashableSection]) -> Void)?
     
     func getData() {
@@ -187,10 +195,12 @@ class ViewModel {
 }
 
 class Cell: UITableViewCell, CellConfigurable {
-    func configure(with viewModel: ItemViewModelProtocol) {
+    func configure(with viewModel: some ItemViewModelProtocol) {
         guard let viewModel = viewModel as? ItemViewModel else {
             return
         }
+        
+        print(viewModel.data.title)
     }
 }
 
