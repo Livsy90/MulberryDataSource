@@ -485,11 +485,11 @@ public final class MulberryDataSource: NSObject, MulberryDataSourceProtocol, UIT
     }
     
     private func reload() {
-        sections
-            .flatMap { ($0.items + [$0.header]).compactMap { $0 } }
-            .forEach { configureItem($0) }
-        
         DispatchQueue.main.async {
+            self.sections
+                .flatMap { ($0.items + [$0.header]).compactMap { $0 } }
+                .forEach { self.configureItem($0) }
+            
             var snapshot = self.dataSource.snapshot()
             snapshot.deleteAllItems()
             snapshot.appendSections(self.sections)
